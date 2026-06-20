@@ -1,0 +1,4 @@
+# Codex CLI のフック機能を有効化する。
+# .codex/hooks.json に定義した PreToolUse フック(pnpm 縛り / lint 抑制禁止)を動作させるために必須。
+[features]
+codex_hooks = true
