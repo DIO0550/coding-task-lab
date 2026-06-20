@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-non-pnpm.sh\"",
+            "statusMessage": "pnpm 縛りチェック"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-lint-suppress.sh\"",
+            "statusMessage": "lint 抑制コメントチェック"
+          }
+        ]
+      }
+    ]
+  }
+}
