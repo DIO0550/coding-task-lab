@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-non-pnpm.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-new-dependency.sh\""
           }
         ]
       },
@@ -16,6 +20,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-lint-suppress.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-new-dependency.sh\""
           }
         ]
       }
