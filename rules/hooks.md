@@ -95,6 +95,53 @@ useEffect(() => {
 - その場合も必ず useEffect 内で登録し、クリーンアップ関数で解除すること(解除漏れは違反)
 - グローバルリスナーが必要なロジックはカスタムフックに切り出すこと(コンポーネント内に直書きしない)
 
+## useRef の使い分け
+
+**判定軸: render で読むなら `useState`、event handler / 同期処理の内側だけで使うなら `useRef`。** React 公式 `useRef` リファレンス("Information that's used for rendering should be state instead")に従う。
+
+```typescript
+// NG: render に出る値を ref で持つ(再レンダーが走らずスピナーが出ない / 規約違反)
+const isLoadingRef = useRef(false);
+return <>{isLoadingRef.current && <Spinner />}</>;
+
+// OK: render に出る情報は state
+const [isLoading, setIsLoading] = useState(false);
+return <>{isLoading && <Spinner />}</>;
+```
+
+### 禁止パターン: ref をフラグにした「防御」
+
+- **二重発火防止の `hasFetchedRef` 禁止**: StrictMode の二重実行を ref で抑えにいかない。「防ぐ」のではなく「結果を捨てる」が公式設計。`useEffect` 内で `let ignore = false` を宣言し、cleanup で `ignore = true` にする(必要なら `AbortController` で実リクエストもキャンセル)
+- **ローディング状態を `isLoadingRef` で持たない**: スピナー・`disabled`・エラー UI に出すなら `useState` 一択
+- **連打防止の `inFlightRef` 禁止**: ボタンなら `useState` + `disabled` 属性が第一選択(DOM レベルで二重発火を遮断できる)
+- カスタムフックがハンドラを返す場合も同じ。フック内で `useState` を持ち、`isSubmitting` 等を一緒に返して呼び出し側で `disabled` に流す
+
+```typescript
+// NG: ref で連打防止
+const inFlightRef = useRef(false);
+const handleClick = async () => {
+  if (inFlightRef.current) return;
+  inFlightRef.current = true;
+  try { await submit(); } finally { inFlightRef.current = false; }
+};
+
+// OK: useState + disabled
+const [isSubmitting, setIsSubmitting] = useState(false);
+const handleClick = async () => {
+  setIsSubmitting(true);
+  try { await submit(); } finally { setIsSubmitting(false); }
+};
+return <button onClick={handleClick} disabled={isSubmitting}>送信</button>;
+```
+
+### `useRef` が正当な場面
+
+- `AbortController` 等、**render では読まず、event handler 内でだけ参照する mutable な値**の保持(例: 検索の最後の入力だけ反映するため、新呼び出しで前を abort する)
+- DOM 要素への参照(フォーカス操作・スクロール制御など、React の外に出る用途)
+- `disabled` 属性で受けられないグローバル `keydown` 連打防止
+
+判断基準: **その値は JSX のどこかで読むか?** 読むなら state、読まないなら ref。
+
 ## カスタムフック
 
 - 命名は `useXxx`。1フック1責務
