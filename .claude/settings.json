@@ -11,6 +11,14 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-new-dependency.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-force-push.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-main-branch-changes.sh\""
           }
         ]
       },
@@ -24,6 +32,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-new-dependency.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR:-.}/.agent-hooks/block-main-branch-changes.sh\""
           }
         ]
       }
