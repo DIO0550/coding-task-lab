@@ -13,6 +13,16 @@
             "type": "command",
             "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-new-dependency.sh\"",
             "statusMessage": "新規ライブラリ追加チェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-force-push.sh\"",
+            "statusMessage": "強制プッシュチェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-main-branch-changes.sh\"",
+            "statusMessage": "main ブランチ直接変更チェック"
           }
         ]
       },
@@ -28,6 +38,11 @@
             "type": "command",
             "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-new-dependency.sh\"",
             "statusMessage": "新規ライブラリ追加チェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-main-branch-changes.sh\"",
+            "statusMessage": "main ブランチ直接変更チェック"
           }
         ]
       }
