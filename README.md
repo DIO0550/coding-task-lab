@@ -38,6 +38,24 @@ echo '{"hand":["2m","3m","4m","5m","6m","7m","2p","3p","4p","5p","6p","7p","5s",
 
 入出力JSONのスキーマは [docs/spec-phase1.md](./docs/spec-phase1.md) を参照。
 
+## Dev Container / Docker
+
+DevContainer の Docker イメージとコンテナには固定名を付けているため、
+VS Code 以外からも次のコマンドで入りやすくしている。
+
+```bash
+docker exec -it coding-task-lab-dev bash
+```
+
+必要に応じて、DevContainer の Compose 設定だけを直接起動することもできる。
+
+```bash
+docker compose -f .devcontainer/docker-compose.yml up -d
+```
+
+- イメージ名: `coding-task-lab-devcontainer:latest`
+- コンテナ名: `coding-task-lab-dev`
+
 ## ドキュメント
 
 - 実装規約: [AGENTS.md](./AGENTS.md)(フォルダ構造・依存方向・テスト方針など)
