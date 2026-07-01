@@ -1,5 +1,7 @@
 services:
   app:
+    image: coding-task-lab-devcontainer:latest
+    container_name: coding-task-lab-dev
     build:
       context: ./node
       dockerfile: Dockerfile
