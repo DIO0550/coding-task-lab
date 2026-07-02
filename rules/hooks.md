@@ -146,6 +146,9 @@ return <button onClick={handleClick} disabled={isSubmitting}>送信</button>;
 
 - 命名は `useXxx`。1フック1責務
 - features/コンポーネント内で同じ hook ロジックが2箇所に現れたらカスタムフックに抽出する
+- **過度な抽象化は禁止**: 1箇所でしか使わない単純な state / handler を「何となく整理するため」だけに公開カスタムフックへ切り出さない。抽出するのは、再利用される stateful UI ロジック、またはコンポーネントの責務分離が明確に改善する場合に限る
+- カスタムフックは stateful UI ロジックの再利用単位であり、状態そのものの共有手段ではない。複数コンポーネントで同じ状態を共有したい場合は、必要な位置へ state を lift up し、props または Provider で渡す
+- **UIを認識しない**: カスタムフックは JSX、コンポーネント、className、文言、アイコン、レイアウト都合を返さない。UI表現はコンポーネント側の責務とし、hook は state、派生値、イベントハンドラ、必要最小限のアクセシビリティ属性や DOM props だけを返す
 - 配置: `src/hooks/` は汎用のみ。feature 固有のものは `features/<x>/hooks/`(ドメインロジック禁止は前セクションの通り)
 - 戻り値は使う側が必要とする最小限に絞る
 
