@@ -1,4 +1,6 @@
 import { fileURLToPath } from "node:url";
+import { ScoreCalculation } from "../services/score-calculation/index.ts";
+import type { CalcResult } from "../services/score-calculation/index.ts";
 
 const readStdin = async (): Promise<string> => {
   const chunks: Buffer[] = [];
@@ -7,35 +9,29 @@ const readStdin = async (): Promise<string> => {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   }
 
-  return Buffer.concat(chunks).toString("utf8").trim();
+  return Buffer.concat(chunks).toString("utf8");
 };
 
-type InvalidResult = {
-  readonly valid: false;
-  readonly reason: "invalid_input";
-};
-
-export const invalidInput = (): InvalidResult => ({
-  valid: false,
-  reason: "invalid_input",
-});
-
-export const calculateInput = (input: string): InvalidResult => {
-  if (input.trim().length === 0) {
-    return invalidInput();
+/** stdin の生テキストから結果を計算する(JSONとして不正なら invalid_input) */
+export const calculateFromText = (text: string): CalcResult => {
+  const trimmed = text.trim();
+  if (trimmed.length === 0) {
+    return { valid: false, reason: "invalid_input" };
   }
 
+  let input: unknown;
   try {
-    JSON.parse(input);
-    return invalidInput();
+    input = JSON.parse(trimmed);
   } catch {
-    return invalidInput();
+    return { valid: false, reason: "invalid_input" };
   }
+
+  return ScoreCalculation.calculate(input);
 };
 
 const main = async (): Promise<void> => {
   const input = await readStdin();
-  console.log(JSON.stringify(calculateInput(input)));
+  console.log(JSON.stringify(calculateFromText(input)));
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
