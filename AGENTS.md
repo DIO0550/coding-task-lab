@@ -29,8 +29,7 @@
 
 | ファイル                                                       | 内容                                                     |
 | -------------------------------------------------------------- | -------------------------------------------------------- |
-| [docs/spec-phase1.md](./docs/spec-phase1.md)                   | 点数計算エンジン(和了判定・役判定・符計算・点数計算)     |
-| [docs/spec-phase2.md](./docs/spec-phase2.md)                   | ゲーム進行・CPU対局エンジン(実際にCPUと対戦できること)   |
+| [docs/spec-phase1.md](./docs/spec-phase1.md)                   | 点数計算エンジン + ゲーム進行・CPU対局エンジン(実際にCPUと対戦できること) |
 | [docs/spec-match-screen.md](./docs/spec-match-screen.md)       | 対戦画面(対戦開始設定・対局操作・結果表示・点数反映)     |
 
 仕様の解釈に迷った場合は、判断と根拠を `docs/assumptions.md` に記録すること。
