@@ -19,6 +19,27 @@ export const Money = {
 } as const;
 ```
 
+## イミュータブル
+
+`domains/` 内のファイルは可能な限り不変に保つ。
+
+- 引数で受け取った配列・オブジェクトを破壊的に変更しない(`push` / `splice` / `sort` / プロパティへの再代入など)
+- 更新が必要な場合はコピーを作って新しい値を返す(スプレッド構文、`map` / `filter` / `toSorted` など)
+- `let` による再代入も可能な限り避ける
+
+```typescript
+// NG: 引数を破壊的に変更している
+function addTile(hand: Tile[], tile: Tile): Tile[] {
+  hand.push(tile);
+  return hand;
+}
+
+// OK: 新しい配列を生成して返す
+function addTile(hand: readonly Tile[], tile: Tile): readonly Tile[] {
+  return [...hand, tile];
+}
+```
+
 ## ルール
 
 - ドメインの型はすべて `Readonly` / イミュータブル
