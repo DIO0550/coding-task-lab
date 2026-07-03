@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { ScoreCalculator } from "../services/score-calculator/index.ts";
 
 const readStdin = async (): Promise<string> => {
   const chunks: Buffer[] = [];
@@ -10,32 +11,19 @@ const readStdin = async (): Promise<string> => {
   return Buffer.concat(chunks).toString("utf8").trim();
 };
 
-type InvalidResult = {
-  readonly valid: false;
-  readonly reason: "invalid_input";
-};
-
-export const invalidInput = (): InvalidResult => ({
-  valid: false,
-  reason: "invalid_input",
-});
-
-export const calculateInput = (input: string): InvalidResult => {
-  if (input.trim().length === 0) {
-    return invalidInput();
-  }
-
+/** 標準入力のJSON文字列から結果JSON文字列を作る */
+export const runCalc = (input: string): string => {
+  let parsed: unknown;
   try {
-    JSON.parse(input);
-    return invalidInput();
+    parsed = JSON.parse(input);
   } catch {
-    return invalidInput();
+    return JSON.stringify({ valid: false, reason: "invalid_input" });
   }
+  return JSON.stringify(ScoreCalculator.calculate(parsed));
 };
 
 const main = async (): Promise<void> => {
-  const input = await readStdin();
-  console.log(JSON.stringify(calculateInput(input)));
+  console.log(runCalc(await readStdin()));
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

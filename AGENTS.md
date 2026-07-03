@@ -47,4 +47,4 @@ pnpm run test パス        # 特定ファイルのテスト実行
 
 - パッケージマネージャ: **pnpm**
 - DevContainer 設定あり（`.devcontainer/`）。ポート 13000 をフォワード
-- パスエイリアス: `@/*` → プロジェクトルートからの相対パス（mahjong/tsconfig.json）
+- パスエイリアス: `@/*` → `src/` からの相対パス（mahjong/tsconfig.json）
