@@ -1,0 +1,62 @@
+import { Tile } from "../../domains/tile/index.ts";
+import type { Tile as TileType } from "../../domains/tile/index.ts";
+import { Wall } from "../../domains/game/index.ts";
+import type { MatchState, SeatIndex } from "../../domains/game/index.ts";
+import type { Situational, Wind } from "../../domains/win-context/index.ts";
+import { Scoring } from "../../domains/scoring/index.ts";
+import type { ScoreInput, ScoreResult } from "../../domains/scoring/index.ts";
+
+const WIND_ORDER: readonly Wind[] = ["ton", "nan", "sha", "pei"];
+
+/** dealerSeat を "ton" とした場合の seat の自風。 */
+export const seatWindOf = (dealerSeat: SeatIndex, seat: SeatIndex): Wind => {
+  const distance = (seat - dealerSeat + 4) % 4;
+  return WIND_ORDER[distance] as Wind;
+};
+
+export type WinDraft = Readonly<{
+  seat: SeatIndex;
+  winTile: TileType;
+  winType: "tsumo" | "ron";
+  situational: readonly Situational[];
+}>;
+
+const concealedHandOf = (state: MatchState, draft: WinDraft): readonly TileType[] => {
+  const player = state.players[draft.seat];
+  if (draft.winType === "tsumo") {
+    if (player.drawnTile === null) {
+      throw new Error("ツモ牌が無いのにツモ和了を評価しようとした");
+    }
+    return [...player.hand, player.drawnTile];
+  }
+  return [...player.hand, draft.winTile];
+};
+
+export const buildScoreInput = (state: MatchState, draft: WinDraft): ScoreInput => {
+  const player = state.players[draft.seat];
+  const dora = Wall.doraIndicators(state).map(Tile.nextInSeries);
+  const uraDora = player.riichi !== "none" ? Wall.uraDoraIndicators(state).map(Tile.nextInSeries) : [];
+
+  return {
+    hand: concealedHandOf(state, draft),
+    melds: player.melds,
+    winTile: draft.winTile,
+    winType: draft.winType,
+    seatWind: seatWindOf(state.dealerSeat, draft.seat),
+    roundWind: state.roundWind,
+    dora,
+    uraDora,
+    riichi: player.riichi,
+    ippatsu: player.riichi !== "none" && player.ippatsuEligible,
+    situational: draft.situational,
+    honba: state.honba,
+    kyotaku: state.kyotaku,
+    rules: { kuitan: state.config.rules.kuitan, redDora: state.config.rules.redDora },
+  };
+};
+
+export const evaluateWin = (state: MatchState, draft: WinDraft): ScoreResult =>
+  Scoring.calculate(buildScoreInput(state, draft));
+
+export const isWinningWithYaku = (state: MatchState, draft: WinDraft): boolean =>
+  evaluateWin(state, draft).valid;
