@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "calc": "node --experimental-strip-types src/cli/calc.ts"
+    "calc": "node --experimental-strip-types --disable-warning=ExperimentalWarning --import ./src/cli/register-hooks.mjs src/cli/calc.ts"
   },
   "dependencies": {
     "next": "16.1.6",
