@@ -1,5 +1,7 @@
 import { fileURLToPath } from "node:url";
 
+import { ScoreCalculator } from "../services/score-calculator/index.ts";
+
 const readStdin = async (): Promise<string> => {
   const chunks: Buffer[] = [];
 
@@ -10,32 +12,10 @@ const readStdin = async (): Promise<string> => {
   return Buffer.concat(chunks).toString("utf8").trim();
 };
 
-type InvalidResult = {
-  readonly valid: false;
-  readonly reason: "invalid_input";
-};
-
-export const invalidInput = (): InvalidResult => ({
-  valid: false,
-  reason: "invalid_input",
-});
-
-export const calculateInput = (input: string): InvalidResult => {
-  if (input.trim().length === 0) {
-    return invalidInput();
-  }
-
-  try {
-    JSON.parse(input);
-    return invalidInput();
-  } catch {
-    return invalidInput();
-  }
-};
-
 const main = async (): Promise<void> => {
   const input = await readStdin();
-  console.log(JSON.stringify(calculateInput(input)));
+  const result = ScoreCalculator.calculateFromJson(input);
+  console.log(JSON.stringify(result));
 };
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
