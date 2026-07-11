@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import { Score, ScoreResult } from "../domains/mahjong";
 
 const readStdin = async (): Promise<string> => {
   const chunks: Buffer[] = [];
@@ -10,26 +11,16 @@ const readStdin = async (): Promise<string> => {
   return Buffer.concat(chunks).toString("utf8").trim();
 };
 
-type InvalidResult = {
-  readonly valid: false;
-  readonly reason: "invalid_input";
-};
-
-export const invalidInput = (): InvalidResult => ({
-  valid: false,
-  reason: "invalid_input",
-});
-
-export const calculateInput = (input: string): InvalidResult => {
+export const calculateInput = (input: string): ScoreResult => {
   if (input.trim().length === 0) {
-    return invalidInput();
+    return { valid: false, reason: "invalid_input" };
   }
 
   try {
-    JSON.parse(input);
-    return invalidInput();
+    const parsed = JSON.parse(input);
+    return Score.calculate(parsed);
   } catch {
-    return invalidInput();
+    return { valid: false, reason: "invalid_input" };
   }
 };
 
