@@ -1,5 +1,8 @@
 import { fileURLToPath } from "node:url";
 
+import { Scoring } from "../domains/scoring/index.ts";
+import type { WinResult } from "../domains/scoring/index.ts";
+
 const readStdin = async (): Promise<string> => {
   const chunks: Buffer[] = [];
 
@@ -10,28 +13,9 @@ const readStdin = async (): Promise<string> => {
   return Buffer.concat(chunks).toString("utf8").trim();
 };
 
-type InvalidResult = {
-  readonly valid: false;
-  readonly reason: "invalid_input";
-};
-
-export const invalidInput = (): InvalidResult => ({
-  valid: false,
-  reason: "invalid_input",
-});
-
-export const calculateInput = (input: string): InvalidResult => {
-  if (input.trim().length === 0) {
-    return invalidInput();
-  }
-
-  try {
-    JSON.parse(input);
-    return invalidInput();
-  } catch {
-    return invalidInput();
-  }
-};
+/** 生の JSON 文字列を点数計算結果に変換する。空文字・不正JSONは invalid_input */
+export const calculateInput = (input: string): WinResult =>
+  Scoring.evaluateJson(input);
 
 const main = async (): Promise<void> => {
   const input = await readStdin();
