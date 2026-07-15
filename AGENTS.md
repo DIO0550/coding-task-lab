@@ -1,7 +1,7 @@
 # AGENTS.md — 実装規約
 
 このリポジトリで実装を行うAIエージェントは、以下の規約に**必ず**従うこと。
-各規約の詳細は `rules/` 配下を参照。
+各規約は `rules/` 配下にあり、以下の `@` import で常にコンテキストへ読み込まれる。
 
 ## プロジェクト構成
 
@@ -13,15 +13,13 @@
 
 ## 規約一覧
 
-| ファイル                                               | 内容                                                       |
-| ------------------------------------------------------ | ---------------------------------------------------------- |
-| [rules/architecture.md](./rules/architecture.md)       | フォルダ構造・依存方向・配置の判断基準                     |
-| [rules/coding.md](./rules/coding.md)                   | コンパニオンオブジェクトパターン・イミュータブル・禁止事項 |
-| [rules/testing.md](./rules/testing.md)                 | テスト配置・テストの書き方(ネスト禁止)                     |
-| [rules/hooks.md](./rules/hooks.md)                     | useEffect / useState / useReducer / カスタムフックの使い方 |
-| [rules/components.md](./rules/components.md)           | コンポーネント設計(Composition パターン)                   |
-| [rules/ui-verification.md](./rules/ui-verification.md) | UIの表示確認手順(playwright-cli)                           |
-| [rules/cli-contract.md](./rules/cli-contract.md)       | 点数計算エンジンのCLI入出力契約                            |
+- @rules/architecture.md — フォルダ構造・依存方向・配置の判断基準
+- @rules/coding.md — コンパニオンオブジェクトパターン・イミュータブル・禁止事項
+- @rules/testing.md — テスト配置・テストの書き方(ネスト禁止)
+- @rules/hooks.md — useEffect / useState / useReducer / カスタムフックの使い方
+- @rules/components.md — コンポーネント設計(Composition パターン)
+- @rules/ui-verification.md — UIの表示確認手順(playwright-cli)
+- [rules/cli-contract.md](./rules/cli-contract.md) — 点数計算エンジンのCLI入出力契約（※ファイル未作成のため import 対象外）
 
 ## 仕様
 
