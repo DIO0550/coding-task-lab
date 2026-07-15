@@ -49,6 +49,7 @@ function addTile(hand: readonly Tile[], tile: Tile): readonly Tile[] {
 - 複数ドメインに跨るロジックは `services/` に置く。features 層にドメイン知識(例: 么九牌の定義、符の丸め規則)を書いてはならない
 - features 層の責務は「services / domains のオーケストレーションとUI」のみ
 - class は使用しない(type + companion object で統一)
+- ブロックのネストは**3段まで**(lint の `max-depth` で強制)。早期リターン・関数分割でフラットに保つ
 
 ## 禁止事項
 
