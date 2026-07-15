@@ -29,6 +29,8 @@ features/<feature-name>/
 ## 配置の判断基準
 
 - ドメインオブジェクトはまず `features/<x>/domains/` に置き、**2つ以上の feature が必要としたら `src/domains/` に昇格**させる(重複実装は禁止)
+- ロジックを持たない純粋な型定義は `types/`(汎用は `src/types/`、feature 固有は `features/<x>/types/`)に置く。**`domains/` 内に型定義だけのファイル(`type.ts` / `types.ts` 等)を作ることは禁止**
+- `domains/` に置いてよいのは「型 + 同名コンパニオンオブジェクト」が揃ったドメインオブジェクトのみ。型はコンパニオンオブジェクトと**同一ファイル**で定義する(型だけを別ファイルに分離しない)
 - 複数ドメインを組み合わせるロジックで、UIにもI/Oにも依存しないものは `src/services/`
 - I/O(localStorage, fetch, 外部ライブラリ)は必ず `src/libs/` 経由
 
