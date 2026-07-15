@@ -49,8 +49,8 @@ app → features → services → domains
 
 - `src/domains/<x>/` は他の domain を import してよい(一方向のみ・循環禁止)。services / features / React / Next.js への依存は禁止
 - `src/services/` は `src/domains/` と `src/types/` と `src/utils/` のみ import 可。React / Next.js への依存は禁止
-- `features/<x>/` は自分の内部、`src/services/`、`src/domains/`、横断層(`components/` `hooks/` `libs/` `utils/` `types/`)を import 可。**feature 間の import は禁止**
-- `features/<x>/domains/` は `src/domains/` を import してよいが、他 feature の domains は不可
+- `features/<x>/` は自分の内部、`src/services/`、`src/domains/`、横断層(`components/` `hooks/` `libs/` `utils/` `types/`)を import 可。**他 feature の import も可**(ただし公開API = その feature の `index.ts` 経由のみ・feature 間の循環参照は禁止)
+- `features/<x>/domains/` は `src/domains/` を import してよいが、他 feature の domains への直接 import は不可(2つ以上の feature が必要とするドメインオブジェクトは `src/domains/` へ昇格させる)
 - `app/` はロジックを持たない。`features/` の呼び出しとルーティング定義のみ
 - `components/` `hooks/` `utils/` `types/` は domains / services / features を import してはならない(ドメイン知識の流入禁止)
 - `libs/` は外部ライブラリと `src/types/` のみ import 可
