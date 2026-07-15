@@ -29,12 +29,15 @@ features/<feature-name>/
 ## 配置の判断基準
 
 - ドメインオブジェクトはまず `features/<x>/domains/` に置き、**2つ以上の feature が必要としたら `src/domains/` に昇格**させる(重複実装は禁止)
+- ロジックを持たない純粋な型定義は `types/`(汎用は `src/types/`、feature 固有は `features/<x>/types/`)に置く。**`domains/` 内に型定義だけのファイル(`type.ts` / `types.ts` 等)を作ることは禁止**
+- `domains/` に置いてよいのは「型 + 同名コンパニオンオブジェクト」が揃ったドメインオブジェクトのみ。型はコンパニオンオブジェクトと**同一ファイル**で定義する(型だけを別ファイルに分離しない)
 - 複数ドメインを組み合わせるロジックで、UIにもI/Oにも依存しないものは `src/services/`
 - I/O(localStorage, fetch, 外部ライブラリ)は必ず `src/libs/` 経由
 
 ## モジュールの公開API
 
 - モジュールフォルダ(domains/services/features の各サブフォルダ)は `index.ts` を公開APIとする
+- モジュールフォルダの基本形は「`index.ts` + 実装ファイル1つ + `__tests__/`」。**1フォルダに実装ファイルは1つ**とし、2つ以上必要になったらサブフォルダに分割する(サブフォルダも同じ形を保つ)
 - フォルダ外部からの import は必ず `index.ts` 経由とし、**内部ファイルへの deep import は禁止**
 - `index.ts` から export するのは外部に公開する必要があるものだけに絞る
 
@@ -46,8 +49,8 @@ app → features → services → domains
 
 - `src/domains/<x>/` は他の domain を import してよい(一方向のみ・循環禁止)。services / features / React / Next.js への依存は禁止
 - `src/services/` は `src/domains/` と `src/types/` と `src/utils/` のみ import 可。React / Next.js への依存は禁止
-- `features/<x>/` は自分の内部、`src/services/`、`src/domains/`、横断層(`components/` `hooks/` `libs/` `utils/` `types/`)を import 可。**feature 間の import は禁止**
-- `features/<x>/domains/` は `src/domains/` を import してよいが、他 feature の domains は不可
+- `features/<x>/` は自分の内部、`src/services/`、`src/domains/`、横断層(`components/` `hooks/` `libs/` `utils/` `types/`)を import 可。**他 feature の import も可**(ただし公開API = その feature の `index.ts` 経由のみ・feature 間の循環参照は禁止)
+- `features/<x>/domains/` は `src/domains/` を import してよいが、他 feature の domains への直接 import は不可(2つ以上の feature が必要とするドメインオブジェクトは `src/domains/` へ昇格させる)
 - `app/` はロジックを持たない。`features/` の呼び出しとルーティング定義のみ
 - `components/` `hooks/` `utils/` `types/` は domains / services / features を import してはならない(ドメイン知識の流入禁止)
 - `libs/` は外部ライブラリと `src/types/` のみ import 可
