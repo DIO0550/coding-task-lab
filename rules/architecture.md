@@ -35,6 +35,7 @@ features/<feature-name>/
 ## モジュールの公開API
 
 - モジュールフォルダ(domains/services/features の各サブフォルダ)は `index.ts` を公開APIとする
+- モジュールフォルダの基本形は「`index.ts` + 実装ファイル1つ + `__tests__/`」。**1フォルダに実装ファイルは1つ**とし、2つ以上必要になったらサブフォルダに分割する(サブフォルダも同じ形を保つ)
 - フォルダ外部からの import は必ず `index.ts` 経由とし、**内部ファイルへの deep import は禁止**
 - `index.ts` から export するのは外部に公開する必要があるものだけに絞る
 
