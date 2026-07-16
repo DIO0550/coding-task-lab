@@ -23,6 +23,21 @@
             "type": "command",
             "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-main-branch-changes.sh\"",
             "statusMessage": "main ブランチ直接変更チェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/pre-push-typecheck.sh\"",
+            "statusMessage": "push 前の型チェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/pre-push-lint.sh\"",
+            "statusMessage": "push 前の全体 lint チェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/pre-push-test-rules.sh\"",
+            "statusMessage": "push 前のテストルール検査"
           }
         ]
       },
@@ -43,6 +58,23 @@
             "type": "command",
             "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/block-main-branch-changes.sh\"",
             "statusMessage": "main ブランチ直接変更チェック"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/post-edit-lint.sh\"",
+            "statusMessage": "編集後の自動リントチェック"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CODEX_PROJECT_DIR:-.}/.agent-hooks/check-test-rules.sh\"",
+            "statusMessage": "テストルール検証"
           }
         ]
       }
