@@ -21,7 +21,7 @@
 | @rules/hooks.md                                  | useEffect / useState / useReducer / カスタムフックの使い方 |
 | @rules/components.md                             | コンポーネント設計(Composition パターン)                   |
 | @rules/ui-verification.md                        | UIの表示確認手順(playwright-cli)                           |
-| [rules/cli-contract.md](./rules/cli-contract.md) | 点数計算エンジンのCLI入出力契約（※ファイル未作成のため import 対象外） |
+| [rules/cli-contract.md](./rules/cli-contract.md) | 点数計算エンジンのCLI入出力契約（点数計算に触れるときのみ参照） |
 
 ## 仕様
 

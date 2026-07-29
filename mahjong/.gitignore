@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright-cli の作業成果物(表示確認時に生成される)
+/.playwright-cli/
