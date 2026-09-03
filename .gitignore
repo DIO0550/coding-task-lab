@@ -141,3 +141,5 @@ vite.config.ts.timestamp-*
 .devcontainer/.init-done
 .playwright
 playwright-cli/
+# playwright-cli の作業ファイル(スナップショット・ログ)
+.playwright-cli/
