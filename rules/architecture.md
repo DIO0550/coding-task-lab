@@ -7,6 +7,7 @@
 ```
 src/
   app/         # ルーティング層: Next.js App Router の規約ファイルのみ(page/layout/route)。薄く保つ
+  cli/         # エントリ層: CLI の入口。`app/` と同じく薄く保つ
   features/    # Feature 層: ユースケース単位(内部構成は後述)
   domains/     # ドメイン層: 複数 feature から使われるドメインオブジェクト(コンパニオンオブジェクト)
   services/    # ドメインサービス層: 複数ドメインを組み合わせるロジック(置く前に帰属先のドメインを探す)
@@ -67,19 +68,15 @@ features/<feature-name>/
 - モジュール名が「対象 + 動作(`-validator` / `-manager` 等)」になったら置き場所を疑う
 - 既存の service を触るときは、**まずドメインへ移せないかを検討**してから変更する(そのまま肥大化させない)
 
-### ドメインが出力形式を必要とする場合
-
-「JSON に出力する」など、ドメインの外側の知識が要るからサービスにする、という判断はしない。ドメインから `services/` は import できないので、**変換手段を引数で受け取る**(変換関数・対応表を渡す)ことで依存方向を保ったままドメインに置ける。
-
 ## utils の形式
 
-`src/utils/` はドメイン知識を持たない汎用純粋関数の置き場。**フラットな1ファイル + PascalCase** とし、ファイル名と同名の名前空間オブジェクトを export する(`ArrayEx` / `NumberEx` / `StringEx` / `Result` / `Option`)。フォルダ + `index.ts` の形にはしない(テストは `src/utils/__tests__/` に集約)。
+`src/utils/` はドメイン知識を持たない汎用純粋関数の置き場。**フラットな1ファイル + PascalCase** とし、ファイル名と同名の名前空間オブジェクトを export する(用意済みの `Result` / `Option` がこの形。組み込み型への操作は `ArrayEx` / `NumberEx` / `StringEx` のように名付ける)。フォルダ + `index.ts` の形にはしない(テストは `src/utils/__tests__/` に集約)。
 
 - 組み込み型に対する汎用操作は `<型名>Ex` に集約する。配列の範囲判定・挿入・移動、数値の性質判定、文字種の判定などを、ドメインやサービスのローカル関数として書かない
 - 汎用ユーティリティ同士も重複させない
 - ドメイン概念になった時点で `utils/` から `domains/` へ移す。判断軸は「その値に生成・判定・変換の規則が付いてくるか」
 - **用途ではなく操作で名付ける。** 名前が呼び出し側での用途を指していると、処理自体は汎用でも UI やドメインの語彙が `utils/` に入り込む。操作そのもので名付けられるなら `utils/` に置いてよく、用途を外すと名前が付けられないなら、それは呼び出し側の関心事なので呼び出し側へ置く
-- 汎用の操作が1つだけでも、`<型名>Ex` に押し込めず**まとまりを表すモジュール**を立てる(ただし呼び出しの無い操作を先回りで足さない)。型で閉じた対応表を汎用変換に置き換えない
+- 呼び出しの無い操作を先回りで足さない
 
 ## モジュールの公開API
 
@@ -101,6 +98,7 @@ app → features → services → domains
 - `features/<x>/` は自分の内部、`src/services/`、`src/domains/`、横断層(`components/` `hooks/` `libs/` `utils/` `types/`)を import 可。**他 feature の import も可**(ただし公開API = その feature の `index.ts` 経由のみ・feature 間の循環参照は禁止)
 - `features/<x>/domains/` は `src/domains/` を import してよいが、他 feature の domains への直接 import は不可(2つ以上の feature が必要とするドメインオブジェクトは `src/domains/` へ昇格させる)
 - `app/` はロジックを持たない。`features/` の呼び出しとルーティング定義のみ
+- `cli/` もロジックを持たない。`libs/` での入出力(標準入出力・JSON の解釈と組み立て)と、`services/` `domains/` の呼び出しのみ。他の層から `cli/` を import してはならない
 - `components/` `hooks/` `utils/` `types/` は domains / services / features を import してはならない(ドメイン知識の流入禁止)
 - `libs/` は外部ライブラリ・`src/types/`・`src/utils/`・`src/domains/` を import 可。`services/` `features/` `components/` `hooks/` への依存は禁止(外部世界とドメインの間の変換に閉じる)。オーケストレーション(複数ドメインを組み合わせる手順)は `libs/` に置かない — それは `services/` の責務
 - 循環依存は全面禁止

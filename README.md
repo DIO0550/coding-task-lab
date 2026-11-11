@@ -66,9 +66,10 @@ docker compose -f .devcontainer/docker-compose.yml up -d
 ```
 src/
   app/         ルーティング層(Next.js App Router)
+  cli/         CLI の入口
   features/    ユースケース単位
   domains/     ドメインオブジェクト
-  services/    複数ドメインに跨るドメインロジック
+  services/    複数ドメインを組み合わせる手順(オーケストレーション)
   components/  汎用UIコンポーネント
   hooks/       汎用カスタムフック
   libs/        外部世界との境界(I/O)

@@ -25,11 +25,11 @@
 
 ```typescript
 // NG: 何の判定かを式から読み解く必要がある
-if (hand.melds.length === 0 && win.type === "tsumo") { /* ... */ }
+if (!isLoading && rows.length === 0) { /* ... */ }
 
 // OK: 判定に名前がある
-const isMenzenTsumo = hand.melds.length === 0 && win.type === "tsumo";
-if (isMenzenTsumo) { /* ... */ }
+const showsEmptyState = !isLoading && rows.length === 0;
+if (showsEmptyState) { /* ... */ }
 ```
 
 - **条件が2つ以上要る理由がコードから読み取れないなら、変数のそばにコメントで残す**
@@ -44,11 +44,11 @@ if (isMenzenTsumo) { /* ... */ }
 
 ## 定数は PascalCase
 
-**`const` の名前に SCREAMING_SNAKE_CASE を使わない。** オブジェクト・配列・スカラーのどれでも、また export の有無にもよらず PascalCase で書く。**コンパニオンオブジェクトのメンバー**も、値がオブジェクトでも同じ。コンパニオンのメンバーは公開 API としてメソッドと並ぶので、`Hoge.method()` と `Hoge.Member` で流儀を割らないため。
+**定数の名前に SCREAMING_SNAKE_CASE を使わない。** ここでの定数は、固定の値を名前で指すために置く `const`(符の基本値・牌の一覧・対応表など、SCREAMING_SNAKE_CASE で書きがちなもの)。オブジェクト・配列・スカラーのどれでも、また export の有無にもよらず PascalCase で書く。関数・コンポーネント・フック・計算結果を受けるローカル変数は対象外で、camelCase(コンポーネントは PascalCase)のまま。フレームワークが名前を決めている export(Next.js の `metadata` など)はその名前に従う。**コンパニオンオブジェクトのメンバー**も、値がオブジェクトでも同じ。コンパニオンのメンバーは公開 API としてメソッドと並ぶので、`Hoge.method()` と `Hoge.Member` で流儀を割らないため。
 
 ### 対応表のキーを PascalCase にするのは「キーが値の別名」のときだけ
 
-データを引くための定数オブジェクトのキーは、**値が id や union の値そのもの**のときだけ PascalCase。値が表示文字列・オブジェクトなど**別のもの**なら、綴りが一致していても見出しなので据え置く。
+データを引くための定数オブジェクトのキーは、**値が id や union の値そのもの**のとき(`Winds.Ton` の値は `"ton"`)だけ PascalCase。値が表示文字列・オブジェクトなど**別のもの**(`WindLabels.ton` の値は `"東"`)なら、キーは union の値をそのまま使う。
 
 ## ファイル名
 
@@ -67,7 +67,6 @@ if (isMenzenTsumo) { /* ... */ }
 
 ## `utils/` のメソッドは動詞で始める
 
-`src/utils/` の `<型名>Ex` は**組み込み型への操作**を集めた場所。メソッド名は**動詞、または結果そのものを表す語**で始め、`with*` の過去分詞にしない。
+`src/utils/` の `<型名>Ex` は**組み込み型への操作**を集めた場所。メソッド名は**動詞、または結果そのものを表す語**で始める(`ArrayEx.insertAt` / `ArrayEx.sum`)。
 
 - **`with*` はドメイン側の語彙。** 「その値を持つ新しい値」を返すコンパニオンオブジェクトのメソッドに使う。`utils/` へ持ち込むと、同じ層の中で語形が 2 通りに割れる
-- 条件付きの操作は、条件を名前に出す。**結果の性質**で名付けると、その性質を保証していない実装と食い違う
