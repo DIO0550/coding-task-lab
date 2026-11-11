@@ -125,11 +125,12 @@ const handleClick = async () => {
   try { await submit(); } finally { inFlightRef.current = false; }
 };
 
-// OK: useState + disabled
+// OK: useState + disabled(submit は失敗を Result で返すので、例外で抜けることはない)
 const [isSubmitting, setIsSubmitting] = useState(false);
 const handleClick = async () => {
   setIsSubmitting(true);
-  try { await submit(); } finally { setIsSubmitting(false); }
+  await submit();
+  setIsSubmitting(false);
 };
 return <button onClick={handleClick} disabled={isSubmitting}>送信</button>;
 ```

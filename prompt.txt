@@ -2,6 +2,7 @@
 - AGENTS.md
 - rules/architecture.md
 - rules/coding.md
+- rules/naming.md
 - rules/testing.md
 - rules/hooks.md
 - rules/components.md
@@ -91,6 +92,7 @@
 - 外部ランタイム依存は追加しない。Next.js / React 本体と devDependencies を除き、原則として依存追加は禁止。
 - ドメインロジックはUIやNext.jsの層から分離する。
 - イミュータブルな実装を優先する。特に domains 内では引数で受け取った配列・オブジェクトを破壊的に変更しない。
+- 失敗しうる処理は Result、値が無いことがありうる処理は Option を返す。例外を投げない。`mahjong/src/utils/Result.ts` / `mahjong/src/utils/Option.ts` / `mahjong/src/types/ValueOf.ts` は用意済みなので、作り直さずに使う。
 - import を try/catch で囲まない。
 - テストしやすい純粋関数中心に設計する。
 - サブエージェントの使用は許可する。必要であれば、以下のように並列化してよい。
