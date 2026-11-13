@@ -53,7 +53,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
 
 ## hooks はドメインロジックを持たない
 
-hooks(useState の更新ロジック、reducer、カスタムフック、イベントハンドラを含む)の責務は**状態の保持と UI イベントの仲介のみ**。ドメインロジック(判定・計算・変換)は必ずコンパニオンオブジェクト(`domains/`)または `services/` 側で管理し、hooks はそれを呼び出すだけにする。
+hooks(useState の更新ロジック、reducer、カスタムフック、イベントハンドラを含む)の責務は**状態の保持と UI イベントの仲介のみ**。ドメインロジック(判定・計算・変換)は必ずコンパニオンオブジェクト(`domains/`)で管理し、hooks はそれ、またはそれらを呼ぶ順序を組む `services/` を呼び出すだけにする。
 
 ```typescript
 // NG: hook 内にドメインロジック(和了判定)を直接書く
@@ -125,11 +125,12 @@ const handleClick = async () => {
   try { await submit(); } finally { inFlightRef.current = false; }
 };
 
-// OK: useState + disabled
+// OK: useState + disabled(submit は失敗を Result で返すので例外で抜けない。成否は呼び出し元へ渡す)
 const [isSubmitting, setIsSubmitting] = useState(false);
 const handleClick = async () => {
   setIsSubmitting(true);
-  try { await submit(); } finally { setIsSubmitting(false); }
+  onSubmitted(await submit());
+  setIsSubmitting(false);
 };
 return <button onClick={handleClick} disabled={isSubmitting}>送信</button>;
 ```
