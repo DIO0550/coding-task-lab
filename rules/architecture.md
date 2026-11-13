@@ -68,6 +68,16 @@ features/<feature-name>/
 - モジュール名が「対象 + 動作(`-validator` / `-manager` 等)」になったら置き場所を疑う
 - 既存の service を触るときは、**まずドメインへ移せないかを検討**してから変更する(そのまま肥大化させない)
 
+## 外部との境界(入力と出力の詰め替え)
+
+**外部の形とドメインの型は別の型として持ち、行き来は `libs/` で詰め替える。** 外部の形は入力JSON・出力JSONの契約(`prompt.txt`)や localStorage に置く形で、ドメインの型は `domains/` のコンパニオンオブジェクトが持つ型。
+
+- **入ってくる値:** `libs/` で外部の形を読み、ドメインの `create` / `from*` を通してドメインの型へ変換してから内側へ渡す。変換に失敗したら `Result.err` で返す(`rules/coding.md`「生成時に検証し、不正な値を存在させない」)。`JSON.parse` の戻り値や未検証の形のまま `services/` / `domains/` へ渡さない
+- **出ていく値:** ドメインの型をそのまま `JSON.stringify` しない。出力の契約を表す型を `libs/` に置き、ドメインの型からそこへ詰め替えてから書き出す(`Result` / `Option` は直列化すると判別子が落ちる)
+- **契約の型をドメインの型で代用しない。** キーや綴りが今たまたま同じでも別の型として書く。代用すると、ドメインの型を変えたときに外部との契約が黙って変わる
+- `JSON.parse` / `JSON.stringify` を書いてよいのは `libs/` だけ
+- **UI はこの対象外。** コンポーネントはドメインの型を読み取り専用のまま props で受けてよい。表示の綴りへの変換は表示側で行う(「ロジックの帰属先」)
+
 ## utils の形式
 
 `src/utils/` はドメイン知識を持たない汎用純粋関数の置き場。**フラットな1ファイル + PascalCase** とし、ファイル名と同名の名前空間オブジェクトを export する(用意済みの `Result` / `Option` がこの形。組み込み型への操作は `ArrayEx` / `NumberEx` / `StringEx` のように名付ける)。フォルダ + `index.ts` の形にはしない(テストは `src/utils/__tests__/` に集約)。
@@ -93,7 +103,7 @@ app → features → services → domains
 ```
 
 - `src/domains/<x>/` は他の domain を import してよい(一方向のみ・循環禁止)。services / features / React / Next.js への依存は禁止
-- **domains から libs への import は `__tests__/` の中だけ許す**(乱数などのフェイクを読むため)。production 側は 0 件で、外の語彙が要るなら境界(`libs/`)で詰め替えてドメインの語彙にする
+- **domains から libs への import は `__tests__/` の中だけ許す**(乱数などのフェイクを読むため)。production 側は 0 件で、外の語彙が要るなら境界(`libs/`)で詰め替えてドメインの語彙にする(「外部との境界」)
 - `src/services/` は `src/domains/` と `src/types/` と `src/utils/` のみ import 可。React / Next.js への依存は禁止
 - `features/<x>/` は自分の内部、`src/services/`、`src/domains/`、横断層(`components/` `hooks/` `libs/` `utils/` `types/`)を import 可。**他 feature の import も可**(ただし公開API = その feature の `index.ts` 経由のみ・feature 間の循環参照は禁止)
 - `features/<x>/domains/` は `src/domains/` を import してよいが、他 feature の domains への直接 import は不可(2つ以上の feature が必要とするドメインオブジェクトは `src/domains/` へ昇格させる)
